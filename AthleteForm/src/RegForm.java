@@ -18,7 +18,7 @@ public class RegForm extends javax.swing.JFrame {
      */
     public RegForm() {
         initComponents();
-
+        updateDay();
     }
 
     Connection con;
@@ -40,32 +40,46 @@ public class RegForm extends javax.swing.JFrame {
     private void updateDay() {
         String dob = comboDobMonth.getSelectedItem().toString();
         String doby = comboDobYear.getSelectedItem().toString();
-        if (dob.equals("January") || dob.equals("March") || dob.equals("May") || dob.equals("July") || dob.equals("August") || dob.equals("October") || dob.equals("December")) {
-            comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"}));
+        if (dob.equals("January") || dob.equals("March") || dob.equals("May") || dob.equals("July")
+                || dob.equals("August") || dob.equals("October") || dob.equals("December")) {
+            comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6",
+                    "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
+                    "24", "25", "26", "27", "28", "29", "30", "31" }));
         } else if (dob.equals("February")) {
             if (Integer.parseInt(doby) % 4 == 0) {
                 if (Integer.parseInt(doby) % 100 == 0) {
                     if (Integer.parseInt(doby) % 400 == 0) {
-                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
+                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4",
+                                "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+                                "20", "21", "22", "23", "24", "25", "26", "27", "28", "29" }));
                     } else {
-                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28"}));
+                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4",
+                                "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+                                "20", "21", "22", "23", "24", "25", "26", "27", "28" }));
                     }
 
                 } else {
-                    comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
+                    comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5",
+                            "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21",
+                            "22", "23", "24", "25", "26", "27", "28", "29" }));
                 }
 
             } else {
-                comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28"}));
+                comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(
+                        new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+                                "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28" }));
             }
 
         } else {
-            comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28"}));
+            comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(
+                    new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+                            "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28" }));
         }
 
     }
 
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
@@ -194,6 +208,11 @@ public class RegForm extends javax.swing.JFrame {
 
         comboDobYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1995", "1996", "1997", "1998",
                 "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010" }));
+        comboDobYear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboDobYearActionPerformed(evt);
+            }
+        });
 
         jLabel11.setBackground(new java.awt.Color(204, 0, 0));
         jLabel11.setForeground(new java.awt.Color(255, 255, 255));
@@ -634,6 +653,10 @@ public class RegForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void comboDobYearActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_comboDobYearActionPerformed
+        updateDay();
+    }// GEN-LAST:event_comboDobYearActionPerformed
+
     private void radioFemaleActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_radioFemaleActionPerformed
         // TODO add your handling code here:
         if (radioFemale.isSelected()) {
@@ -666,8 +689,7 @@ public class RegForm extends javax.swing.JFrame {
     }// GEN-LAST:event_txtAddressActionPerformed
 
     private void comboDobMonthActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_comboDobMonthActionPerformed
-        // TODO add your handling code here:
-
+        updateDay();
     }// GEN-LAST:event_comboDobMonthActionPerformed
 
     private void radioMaleActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_radioMaleActionPerformed
