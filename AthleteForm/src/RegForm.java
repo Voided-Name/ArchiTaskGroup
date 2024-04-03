@@ -753,7 +753,7 @@ public class RegForm extends javax.swing.JFrame {
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnRegisterActionPerformed
         Connect();
-
+        
         String firstname = txtFname.getText();
         String lastname = txtLname.getText();
         String email = txtEmail.getText();
@@ -763,9 +763,10 @@ public class RegForm extends javax.swing.JFrame {
         String dob = comboDobYear.getSelectedItem().toString() + "-"
                 + monthMap.get(comboDobMonth.getSelectedItem().toString()) + "-"
                 + comboDobDay.getSelectedItem().toString();
-        System.out.println(dob);
-
         Date date = Date.valueOf(dob);
+        
+
+        
 
         try {
             con.close();
