@@ -521,7 +521,8 @@ public void Connect(){
     }//GEN-LAST:event_jComboBox5ActionPerformed
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
-        Connect();    }//GEN-LAST:event_btnRegisterActionPerformed
+        Connect();   
+ }//GEN-LAST:event_btnRegisterActionPerformed
 
     /**
      * @param args the command line arguments
