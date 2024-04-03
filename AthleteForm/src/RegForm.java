@@ -2,6 +2,7 @@
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.HashMap;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -12,13 +13,27 @@ import java.util.logging.Logger;
  * @author Nash,Jet
  */
 public class RegForm extends javax.swing.JFrame {
+    HashMap<String, String> monthMap = new HashMap<>();
 
     /**
      * Creates new form RegForm
      */
     public RegForm() {
+        monthMap.put("January", "01");
+        monthMap.put("February", "02");
+        monthMap.put("March", "03");
+        monthMap.put("April", "04");
+        monthMap.put("May", "05");
+        monthMap.put("June", "06");
+        monthMap.put("July", "07");
+        monthMap.put("August", "08");
+        monthMap.put("September", "09");
+        monthMap.put("October", "10");
+        monthMap.put("November", "11");
+        monthMap.put("December", "12");
         initComponents();
         updateDay();
+
     }
 
     Connection con;
@@ -73,7 +88,8 @@ public class RegForm extends javax.swing.JFrame {
         } else {
             comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(
                     new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-                            "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30"}));
+                            "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+                            "30" }));
         }
 
     }
@@ -744,10 +760,11 @@ public class RegForm extends javax.swing.JFrame {
         String username = txtUname.getText();
         String contact = txtContact.getText();
         String address = txtAddress.getText();
-        String dob = comboDobYear.getSelectedItem().toString() + "-" + comboDobMonth.getSelectedItem().toString() + "-"
+        String dob = comboDobYear.getSelectedItem().toString() + "-"
+                + monthMap.get(comboDobMonth.getSelectedItem().toString()) + "-"
                 + comboDobDay.getSelectedItem().toString();
         System.out.println(dob);
-        
+
         Date date = Date.valueOf(dob);
 
         try {
