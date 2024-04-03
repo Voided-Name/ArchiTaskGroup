@@ -19,7 +19,6 @@ public class RegForm extends javax.swing.JFrame {
      */
     public RegForm() {
         initComponents();
-
     }
 
     Connection con;
