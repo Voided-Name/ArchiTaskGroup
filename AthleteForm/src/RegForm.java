@@ -85,6 +85,7 @@ private static void updateDay(){
         jLabel20 = new javax.swing.JLabel();
         btnRegister = new javax.swing.JButton();
         comboDobDay = new javax.swing.JComboBox<>();
+        switchLogin = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -277,6 +278,13 @@ private static void updateDay(){
 
         comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        switchLogin.setText("Login Instead");
+        switchLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                switchLoginActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -346,7 +354,8 @@ private static void updateDay(){
                                         .addComponent(jLabel13)
                                         .addComponent(txtGcontact, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel15)
-                                        .addComponent(txtGemail, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addComponent(txtGemail, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(switchLogin)))
                             .addGap(34, 34, 34))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -365,7 +374,7 @@ private static void updateDay(){
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -451,7 +460,9 @@ private static void updateDay(){
                             .addComponent(radioFemale))
                         .addGap(18, 18, 18)
                         .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(switchLogin)
+                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         pack();
@@ -545,6 +556,11 @@ private static void updateDay(){
         }
  }//GEN-LAST:event_btnRegisterActionPerformed
 
+    private void switchLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchLoginActionPerformed
+        new LogForm().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_switchLoginActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -606,6 +622,7 @@ private static void updateDay(){
     private javax.swing.JLabel jLabel9;
     private javax.swing.JRadioButton radioFemale;
     private javax.swing.JRadioButton radioMale;
+    private javax.swing.JButton switchLogin;
     private javax.swing.JTextField txtAddress;
     private javax.swing.JTextField txtCPW;
     private javax.swing.JTextField txtCampus;
