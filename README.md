@@ -4,8 +4,8 @@ BSIT 2B
 Made with JavaFX
 
 ## TODO
-- Input Validation
+- [ ] Input Validation
 
-- Getting Gender Input
+- [ ] Getting Gender Input
 
-- Checking Empty Fields
+- [ ] Checking Empty Fields
