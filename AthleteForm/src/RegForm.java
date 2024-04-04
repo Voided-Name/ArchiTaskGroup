@@ -637,14 +637,12 @@ public class RegForm extends javax.swing.JFrame {
                 + monthMap.get(comboDobMonth.getSelectedItem().toString()) + "-"
                 + comboDobDay.getSelectedItem().toString();
         Date date = Date.valueOf(dob);
-        
-
-    
         GenderSelect();
         String types = txtTypes.getText();
         String campus = txtCampus.getText();
         
         
+
         try {
             con.close();
         } catch (SQLException ex) {
