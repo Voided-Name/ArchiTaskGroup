@@ -66,39 +66,39 @@ public class RegForm extends javax.swing.JFrame {
         String doby = comboDobYear.getSelectedItem().toString();
         if (dob.equals("January") || dob.equals("March") || dob.equals("May") || dob.equals("July")
                 || dob.equals("August") || dob.equals("October") || dob.equals("December")) {
-            comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6",
-                    "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
-                    "24", "25", "26", "27", "28", "29", "30", "31" }));
+            comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5", "6",
+                "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
+                "24", "25", "26", "27", "28", "29", "30", "31"}));
         } else if (dob.equals("February")) {
             if (Integer.parseInt(doby) % 4 == 0) {
                 if (Integer.parseInt(doby) % 100 == 0) {
                     if (Integer.parseInt(doby) % 400 == 0) {
-                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4",
-                                "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
-                                "20", "21", "22", "23", "24", "25", "26", "27", "28", "29" }));
+                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4",
+                            "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+                            "20", "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
                     } else {
-                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4",
-                                "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
-                                "20", "21", "22", "23", "24", "25", "26", "27", "28" }));
+                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4",
+                            "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+                            "20", "21", "22", "23", "24", "25", "26", "27", "28"}));
                     }
 
                 } else {
-                    comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5",
-                            "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21",
-                            "22", "23", "24", "25", "26", "27", "28", "29" }));
+                    comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5",
+                        "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21",
+                        "22", "23", "24", "25", "26", "27", "28", "29"}));
                 }
 
             } else {
                 comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(
-                        new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-                                "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28" }));
+                        new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+                            "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28"}));
             }
 
         } else {
             comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(
-                    new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-                            "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
-                            "30" }));
+                    new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+                        "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+                        "30"}));
         }
 
     }
@@ -175,6 +175,7 @@ public class RegForm extends javax.swing.JFrame {
         comboCourse = new javax.swing.JComboBox<>();
         txtPassword = new javax.swing.JPasswordField();
         txtCPW = new javax.swing.JPasswordField();
+        txtError = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -374,12 +375,21 @@ public class RegForm extends javax.swing.JFrame {
             "College of Nursing",
             "College of Public Administration and Disaster Management",
             "Laboratory High School"
-        });
+        }));
         comboCourse.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboCourseActionPerformed(evt);
             }
         });
+
+        txtPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPasswordActionPerformed(evt);
+            }
+        });
+
+        txtError.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        txtError.setText(".");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -388,24 +398,6 @@ public class RegForm extends javax.swing.JFrame {
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel10)
-                                .addComponent(jLabel14)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(radioMale)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(radioFemale))
-                                .addComponent(btnRegister, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(comboDobDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(comboDobMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(comboDobYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(34, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -425,8 +417,26 @@ public class RegForm extends javax.swing.JFrame {
                                 .addComponent(txtLname, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel5)
                                 .addComponent(jLabel8))
-                            .addComponent(txtFname, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                            .addComponent(txtFname, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(comboDobDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(comboDobMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(comboDobYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(radioMale)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(radioFemale))
+                            .addComponent(btnRegister, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtError, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -557,12 +567,18 @@ public class RegForm extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(switchLogin)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(switchLogin)
+                    .addComponent(txtError))
                 .addContainerGap(8, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPasswordActionPerformed
 
     private void comboCourseActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_comboCourseActionPerformed
         if (comboCourse.getSelectedItem().toString() == "College of Architecture") {
@@ -570,7 +586,10 @@ public class RegForm extends javax.swing.JFrame {
             model.addElement("5TH YEAR");
         } else {
             DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) comboYear.getModel();
-            model.removeElementAt(4);
+            
+            if (model.getSize() > 4) {
+                model.removeElementAt(4);
+            }
         }
     }// GEN-LAST:event_comboCourseActionPerformed
 
@@ -643,10 +662,6 @@ public class RegForm extends javax.swing.JFrame {
     private void txtCampusActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtCampusActionPerformed
         // TODO add your handling code here:
     }// GEN-LAST:event_txtCampusActionPerformed
-
-    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtPasswordActionPerformed
-        // TODO add your handling code here:
-    }// GEN-LAST:event_txtPasswordActionPerformed
 
     private void txtCPWActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtCPWActionPerformed
         // TODO add your handling code here:
@@ -768,6 +783,7 @@ public class RegForm extends javax.swing.JFrame {
     private javax.swing.JTextField txtCampus;
     private javax.swing.JTextField txtContact;
     private javax.swing.JTextField txtEmail;
+    private javax.swing.JLabel txtError;
     private javax.swing.JTextField txtFname;
     private javax.swing.JTextField txtGcontact;
     private javax.swing.JTextField txtGemail;

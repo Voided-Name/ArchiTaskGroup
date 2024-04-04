@@ -26,29 +26,6 @@
           <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                              <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel14" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="radioMale" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="radioFemale" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="btnRegister" alignment="1" min="-2" pref="254" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="comboDobDay" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="comboDobMonth" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="comboDobYear" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <EmptySpace pref="26" max="32767" attributes="0"/>
-                  </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace pref="34" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
@@ -74,9 +51,31 @@
                           </Group>
                           <Component id="txtFname" alignment="1" min="-2" pref="260" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="comboDobDay" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="comboDobMonth" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="comboDobYear" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel14" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="radioMale" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="radioFemale" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="btnRegister" alignment="0" max="32767" attributes="0"/>
+                          <Component id="txtError" alignment="0" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" alignment="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
@@ -241,7 +240,10 @@
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="switchLogin" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="switchLogin" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtError" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace pref="8" max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -571,7 +573,7 @@
     <Component class="javax.swing.JComboBox" name="comboCourse">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { &#xa;    &quot;College of Agriculture&quot;,&#xa;    &quot;College of Architecture&quot;,&#xa;    &quot;College of Arts and Sciences&quot;,&#xa;    &quot;College of Criminology&quot;,&#xa;    &quot;College of Education&quot;,&#xa;    &quot;College of Engineering&quot;,&#xa;    &quot;College of Industrial Technology&quot;,&#xa;    &quot;College of Information and Communications Technology&quot;,&#xa;    &quot;College of Management and Business Technology&quot;,&#xa;    &quot;College of Nursing&quot;,&#xa;    &quot;College of Public Administration and Disaster Management&quot;,&#xa;    &quot;Laboratory High School&quot;&#xa;}" type="code"/>
+          <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] {&#xa;    &quot;College of Agriculture&quot;,&#xa;    &quot;College of Architecture&quot;,&#xa;    &quot;College of Arts and Sciences&quot;,&#xa;    &quot;College of Criminology&quot;,&#xa;    &quot;College of Education&quot;,&#xa;    &quot;College of Engineering&quot;,&#xa;    &quot;College of Industrial Technology&quot;,&#xa;    &quot;College of Information and Communications Technology&quot;,&#xa;    &quot;College of Management and Business Technology&quot;,&#xa;    &quot;College of Nursing&quot;,&#xa;    &quot;College of Public Administration and Disaster Management&quot;,&#xa;    &quot;Laboratory High School&quot;&#xa;})" type="code"/>
         </Property>
       </Properties>
       <Events>
@@ -582,8 +584,17 @@
       </AuxValues>
     </Component>
     <Component class="javax.swing.JPasswordField" name="txtPassword">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtPasswordActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JPasswordField" name="txtCPW">
+    </Component>
+    <Component class="javax.swing.JLabel" name="txtError">
+      <Properties>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="text" type="java.lang.String" value="."/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
