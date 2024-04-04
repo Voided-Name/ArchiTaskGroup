@@ -86,7 +86,6 @@
                               <Component id="txtCampus" alignment="0" min="-2" pref="274" max="-2" attributes="0"/>
                               <Component id="jLabel18" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                                  <Component id="txtPassword" alignment="1" min="-2" pref="274" max="-2" attributes="0"/>
                                   <Group type="103" alignment="1" groupAlignment="1" max="-2" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
                                           <Component id="comboCourse" max="32767" attributes="0"/>
@@ -95,7 +94,6 @@
                                       </Group>
                                       <Component id="txtTypes" alignment="1" min="-2" pref="274" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="txtCPW" alignment="1" min="-2" pref="274" max="-2" attributes="0"/>
                                   <Group type="103" alignment="1" groupAlignment="0" attributes="0">
                                       <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="txtGfname" alignment="0" min="-2" pref="274" max="-2" attributes="0"/>
@@ -105,6 +103,8 @@
                                       <Component id="txtGemail" alignment="0" min="-2" pref="274" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="switchLogin" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtPassword" alignment="1" min="-2" pref="274" max="-2" attributes="0"/>
+                                  <Component id="txtCPW" alignment="1" min="-2" pref="274" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
@@ -510,21 +510,11 @@
         <Property name="text" type="java.lang.String" value="CAMPUS"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtPassword">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtPasswordActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JLabel" name="jLabel19">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
         <Property name="text" type="java.lang.String" value="PASSWORD"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="txtCPW">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtCPWActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel20">
       <Properties>
@@ -590,6 +580,10 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
+    </Component>
+    <Component class="javax.swing.JPasswordField" name="txtPassword">
+    </Component>
+    <Component class="javax.swing.JPasswordField" name="txtCPW">
     </Component>
   </SubComponents>
 </Form>
