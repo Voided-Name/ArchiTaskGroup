@@ -573,7 +573,7 @@
     <Component class="javax.swing.JComboBox" name="comboCourse">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] {&#xa;    &quot;College of Agriculture&quot;,&#xa;    &quot;College of Architecture&quot;,&#xa;    &quot;College of Arts and Sciences&quot;,&#xa;    &quot;College of Criminology&quot;,&#xa;    &quot;College of Education&quot;,&#xa;    &quot;College of Engineering&quot;,&#xa;    &quot;College of Industrial Technology&quot;,&#xa;    &quot;College of Information and Communications Technology&quot;,&#xa;    &quot;College of Management and Business Technology&quot;,&#xa;    &quot;College of Nursing&quot;,&#xa;    &quot;College of Public Administration and Disaster Management&quot;,&#xa;    &quot;Laboratory High School&quot;&#xa;})" type="code"/>
+          <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] {&#xa;    &quot;COA&quot;,&#xa;    &quot;COArch&quot;,&#xa;    &quot;CAS&quot;,&#xa;    &quot;COC&quot;,&#xa;    &quot;COEd&quot;,&#xa;    &quot;COE&quot;,&#xa;    &quot;CIT&quot;,&#xa;    &quot;CICT&quot;,&#xa;    &quot;CMBT&quot;,&#xa;    &quot;CON&quot;,&#xa;    &quot;CPADM&quot;,&#xa;    &quot;LHS&quot;&#xa;})" type="code"/>
         </Property>
       </Properties>
       <Events>

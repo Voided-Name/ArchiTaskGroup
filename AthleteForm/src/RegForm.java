@@ -363,18 +363,18 @@ public class RegForm extends javax.swing.JFrame {
         });
 
         comboCourse.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {
-            "College of Agriculture",
-            "College of Architecture",
-            "College of Arts and Sciences",
-            "College of Criminology",
-            "College of Education",
-            "College of Engineering",
-            "College of Industrial Technology",
-            "College of Information and Communications Technology",
-            "College of Management and Business Technology",
-            "College of Nursing",
-            "College of Public Administration and Disaster Management",
-            "Laboratory High School"
+            "COA",
+            "COArch",
+            "CAS",
+            "COC",
+            "COEd",
+            "COE",
+            "CIT",
+            "CICT",
+            "CMBT",
+            "CON",
+            "CPADM",
+            "LHS"
         }));
         comboCourse.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
