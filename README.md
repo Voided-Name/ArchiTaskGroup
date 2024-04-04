@@ -8,6 +8,6 @@ Made with JavaFX
 
 - [ ] Input Validation
 
-- [/] Getting Gender Input (pamerge nalang jet)
+- [X] Getting Gender Input (pamerge nalang jet)
 
 - [ ] Checking Empty Fields
