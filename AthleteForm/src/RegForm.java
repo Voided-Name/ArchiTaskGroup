@@ -1,4 +1,6 @@
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
@@ -101,7 +103,27 @@ public class RegForm extends javax.swing.JFrame {
 
     }
 
+    public static String encryptPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            md.update(password.getBytes());
+
+            byte[] hashedBytes = md.digest();
+
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
@@ -145,14 +167,14 @@ public class RegForm extends javax.swing.JFrame {
         jLabel17 = new javax.swing.JLabel();
         txtCampus = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
-        txtPassword = new javax.swing.JTextField();
         jLabel19 = new javax.swing.JLabel();
-        txtCPW = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
         btnRegister = new javax.swing.JButton();
         comboDobDay = new javax.swing.JComboBox<>();
         switchLogin = new javax.swing.JButton();
         comboCourse = new javax.swing.JComboBox<>();
+        txtPassword = new javax.swing.JPasswordField();
+        txtCPW = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -312,20 +334,8 @@ public class RegForm extends javax.swing.JFrame {
         jLabel18.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel18.setText("CAMPUS");
 
-        txtPassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtPasswordActionPerformed(evt);
-            }
-        });
-
         jLabel19.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel19.setText("PASSWORD");
-
-        txtCPW.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCPWActionPerformed(evt);
-            }
-        });
 
         jLabel20.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel20.setText("CONFIRM PASSWORD");
@@ -426,14 +436,12 @@ public class RegForm extends javax.swing.JFrame {
                                 .addComponent(txtCampus, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addGroup(layout.createSequentialGroup()
                                             .addComponent(comboCourse, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(comboYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(txtTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(txtCPW, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabel12)
                                         .addComponent(txtGfname, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -441,7 +449,9 @@ public class RegForm extends javax.swing.JFrame {
                                         .addComponent(txtGcontact, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel15)
                                         .addComponent(txtGemail, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(switchLogin)))
+                                    .addComponent(switchLogin)
+                                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtCPW, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGap(34, 34, 34))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -663,6 +673,16 @@ public class RegForm extends javax.swing.JFrame {
         String types = txtTypes.getText();
         String campus = txtCampus.getText();
 
+        char[] password = txtPassword.getPassword();
+        String passwords = new String(password);
+
+        char[] cpassword = txtCPW.getPassword();
+        String cpasswords = new String(cpassword);
+
+        String guardian_firstname = txtGfname.getText();
+        String guardian_contact = txtGcontact.getText();
+        String guardian_email = txtGemail.getText();
+
         try {
             con.close();
         } catch (SQLException ex) {
@@ -744,7 +764,7 @@ public class RegForm extends javax.swing.JFrame {
     private javax.swing.JRadioButton radioMale;
     private javax.swing.JButton switchLogin;
     private javax.swing.JTextField txtAddress;
-    private javax.swing.JTextField txtCPW;
+    private javax.swing.JPasswordField txtCPW;
     private javax.swing.JTextField txtCampus;
     private javax.swing.JTextField txtContact;
     private javax.swing.JTextField txtEmail;
@@ -753,7 +773,7 @@ public class RegForm extends javax.swing.JFrame {
     private javax.swing.JTextField txtGemail;
     private javax.swing.JTextField txtGfname;
     private javax.swing.JTextField txtLname;
-    private javax.swing.JTextField txtPassword;
+    private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtTypes;
     private javax.swing.JTextField txtUname;
     // End of variables declaration//GEN-END:variables
