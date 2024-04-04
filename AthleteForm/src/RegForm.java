@@ -1,8 +1,7 @@
 
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.HashMap;
+import javax.swing.DefaultComboBoxModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -34,7 +33,6 @@ public class RegForm extends javax.swing.JFrame {
         monthMap.put("December", "12");
         initComponents();
         updateDay();
-
     }
 
     Connection con;
@@ -52,6 +50,7 @@ public class RegForm extends javax.swing.JFrame {
 
         }
     }
+
     private void GenderSelect() {
         if (radioFemale.isSelected()) {
             String gender = "Female";
@@ -65,44 +64,48 @@ public class RegForm extends javax.swing.JFrame {
         String doby = comboDobYear.getSelectedItem().toString();
         if (dob.equals("January") || dob.equals("March") || dob.equals("May") || dob.equals("July")
                 || dob.equals("August") || dob.equals("October") || dob.equals("December")) {
-            comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5", "6",
-                "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
-                "24", "25", "26", "27", "28", "29", "30", "31"}));
+            comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6",
+                    "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
+                    "24", "25", "26", "27", "28", "29", "30", "31" }));
         } else if (dob.equals("February")) {
             if (Integer.parseInt(doby) % 4 == 0) {
                 if (Integer.parseInt(doby) % 100 == 0) {
                     if (Integer.parseInt(doby) % 400 == 0) {
-                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4",
-                            "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
-                            "20", "21", "22", "23", "24", "25", "26", "27", "28", "29"}));
+                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4",
+                                "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+                                "20", "21", "22", "23", "24", "25", "26", "27", "28", "29" }));
                     } else {
-                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4",
-                            "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
-                            "20", "21", "22", "23", "24", "25", "26", "27", "28"}));
+                        comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4",
+                                "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+                                "20", "21", "22", "23", "24", "25", "26", "27", "28" }));
                     }
 
                 } else {
-                    comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5",
-                        "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21",
-                        "22", "23", "24", "25", "26", "27", "28", "29"}));
+                    comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5",
+                            "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21",
+                            "22", "23", "24", "25", "26", "27", "28", "29" }));
                 }
 
             } else {
                 comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(
-                        new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-                            "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28"}));
+                        new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+                                "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28" }));
             }
 
         } else {
             comboDobDay.setModel(new javax.swing.DefaultComboBoxModel<>(
-                    new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-                        "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
-                        "30"}));
+                    new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+                            "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+                            "30" }));
         }
 
     }
 
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
@@ -138,8 +141,7 @@ public class RegForm extends javax.swing.JFrame {
         txtGemail = new javax.swing.JTextField();
         txtTypes = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
-        txtYear = new javax.swing.JComboBox<>();
-        txtCourse = new javax.swing.JTextField();
+        comboYear = new javax.swing.JComboBox<>();
         jLabel17 = new javax.swing.JLabel();
         txtCampus = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
@@ -150,6 +152,7 @@ public class RegForm extends javax.swing.JFrame {
         btnRegister = new javax.swing.JButton();
         comboDobDay = new javax.swing.JComboBox<>();
         switchLogin = new javax.swing.JButton();
+        comboCourse = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -295,18 +298,7 @@ public class RegForm extends javax.swing.JFrame {
         jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel16.setText("TYPES OF SPORT");
 
-        txtYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1ST YEAR", "2ND YEAR", "3RD YEAR", "4TH YEAR"}));
-        txtYear.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtYearActionPerformed(evt);
-            }
-        });
-
-        txtCourse.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCourseActionPerformed(evt);
-            }
-        });
+        comboYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1ST YEAR", "2ND YEAR", "3RD YEAR", "4TH YEAR"}));
 
         jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel17.setText("COURSE");
@@ -356,6 +348,26 @@ public class RegForm extends javax.swing.JFrame {
         switchLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 switchLoginActionPerformed(evt);
+            }
+        });
+
+        comboCourse.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {
+            "College of Agriculture",
+            "College of Architecture",
+            "College of Arts and Sciences",
+            "College of Criminology",
+            "College of Education",
+            "College of Engineering",
+            "College of Industrial Technology",
+            "College of Information and Communications Technology",
+            "College of Management and Business Technology",
+            "College of Nursing",
+            "College of Public Administration and Disaster Management",
+            "Laboratory High School"
+        });
+        comboCourse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboCourseActionPerformed(evt);
             }
         });
 
@@ -417,9 +429,9 @@ public class RegForm extends javax.swing.JFrame {
                                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addGroup(layout.createSequentialGroup()
-                                            .addComponent(txtCourse)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(txtYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(comboCourse, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(comboYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(txtTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(txtCPW, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -472,9 +484,9 @@ public class RegForm extends javax.swing.JFrame {
                         .addComponent(jLabel17)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCourse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(comboYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(comboCourse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(11, 11, 11))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel4)
@@ -541,6 +553,16 @@ public class RegForm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void comboCourseActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_comboCourseActionPerformed
+        if (comboCourse.getSelectedItem().toString() == "College of Architecture") {
+            DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) comboYear.getModel();
+            model.addElement("5TH YEAR");
+        } else {
+            DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) comboYear.getModel();
+            model.removeElementAt(4);
+        }
+    }// GEN-LAST:event_comboCourseActionPerformed
 
     private void comboDobYearActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_comboDobYearActionPerformed
         updateDay();
@@ -640,8 +662,6 @@ public class RegForm extends javax.swing.JFrame {
         GenderSelect();
         String types = txtTypes.getText();
         String campus = txtCampus.getText();
-        
-        
 
         try {
             con.close();
@@ -696,9 +716,11 @@ public class RegForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegister;
+    private javax.swing.JComboBox<String> comboCourse;
     private javax.swing.JComboBox<String> comboDobDay;
     private javax.swing.JComboBox<String> comboDobMonth;
     private javax.swing.JComboBox<String> comboDobYear;
+    private javax.swing.JComboBox<String> comboYear;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -725,7 +747,6 @@ public class RegForm extends javax.swing.JFrame {
     private javax.swing.JTextField txtCPW;
     private javax.swing.JTextField txtCampus;
     private javax.swing.JTextField txtContact;
-    private javax.swing.JTextField txtCourse;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtFname;
     private javax.swing.JTextField txtGcontact;
@@ -735,6 +756,5 @@ public class RegForm extends javax.swing.JFrame {
     private javax.swing.JTextField txtPassword;
     private javax.swing.JTextField txtTypes;
     private javax.swing.JTextField txtUname;
-    private javax.swing.JComboBox<String> txtYear;
     // End of variables declaration//GEN-END:variables
 }

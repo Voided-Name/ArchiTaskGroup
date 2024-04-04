@@ -89,9 +89,9 @@
                                   <Component id="txtPassword" alignment="1" min="-2" pref="274" max="-2" attributes="0"/>
                                   <Group type="103" alignment="1" groupAlignment="1" max="-2" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="txtCourse" max="32767" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="txtYear" min="-2" max="-2" attributes="0"/>
+                                          <Component id="comboCourse" max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="comboYear" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Component id="txtTypes" alignment="1" min="-2" pref="274" max="-2" attributes="0"/>
                                   </Group>
@@ -162,9 +162,9 @@
                       <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="txtYear" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtCourse" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="comboYear" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="txtEmail" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="comboCourse" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                   </Group>
@@ -483,23 +483,15 @@
         <Property name="text" type="java.lang.String" value="TYPES OF SPORT"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="txtYear">
+    <Component class="javax.swing.JComboBox" name="comboYear">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { &quot;1ST YEAR&quot;, &quot;2ND YEAR&quot;, &quot;3RD YEAR&quot;, &quot;4TH YEAR&quot;})" type="code"/>
         </Property>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtYearActionPerformed"/>
-      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
-    </Component>
-    <Component class="javax.swing.JTextField" name="txtCourse">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtCourseActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel17">
       <Properties>
@@ -585,6 +577,19 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="switchLoginActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="comboCourse">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { &#xa;    &quot;College of Agriculture&quot;,&#xa;    &quot;College of Architecture&quot;,&#xa;    &quot;College of Arts and Sciences&quot;,&#xa;    &quot;College of Criminology&quot;,&#xa;    &quot;College of Education&quot;,&#xa;    &quot;College of Engineering&quot;,&#xa;    &quot;College of Industrial Technology&quot;,&#xa;    &quot;College of Information and Communications Technology&quot;,&#xa;    &quot;College of Management and Business Technology&quot;,&#xa;    &quot;College of Nursing&quot;,&#xa;    &quot;College of Public Administration and Disaster Management&quot;,&#xa;    &quot;Laboratory High School&quot;&#xa;}" type="code"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="comboCourseActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>
