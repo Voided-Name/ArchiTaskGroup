@@ -1,13 +1,10 @@
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
-import java.awt.Component;
 import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.*;
+import java.util.Date;
+import java.util.Calendar;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -19,12 +16,57 @@ import javax.swing.border.*;
  */
 public class RegForm extends javax.swing.JFrame {
 
-    HashMap<String, String> monthMap = new HashMap<>();
+    static HashMap<String, String> monthMap = new HashMap<>();
+    static int[] spaceCount;
+    static int yearNow;
+    static int monthNow;
+    static int dateNow;
+    String[] dateYearSetup;
 
     /**
      * Creates new form RegForm
      */
     public RegForm() {
+        // setting up date checkers
+        Date now = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(now);
+        yearNow = cal.get(Calendar.YEAR) + 1;
+        monthNow = cal.get(Calendar.MONTH) + 1;
+        dateNow = cal.get(Calendar.DAY_OF_MONTH) + 1;
+
+        // setup months for changing days
+        RegForm.setUpMonth();
+        dateYearSetup = new String[2010 - 1990];
+
+        int y = 0;
+        for (int x = 1990; x < 2010; x++) {
+            dateYearSetup[y] = Integer.toString(x);
+            y++;
+        }
+        initComponents();
+
+        // turning off highlight on change
+        Commands.attachDeHighlightListener(txtFname);
+        Commands.attachDeHighlightListener(txtLname);
+        Commands.attachDeHighlightListener(txtEmail);
+        Commands.attachDeHighlightListener(txtContact);
+        Commands.attachDeHighlightListener(txtAddress);
+        Commands.attachDeHighlightListener(txtPassword);
+        Commands.attachDeHighlightListener(txtCPW);
+        Commands.attachDeHighlightListener(txtGfname);
+        Commands.attachDeHighlightListener(txtGcontact);
+        Commands.attachDeHighlightListener(txtGemail);
+        Commands.attachDeHighlightListener(txtUname);
+
+        setResizable(false);
+        setLocationRelativeTo(null);
+        updateDay();
+    }
+
+    static Connection con;
+
+    private static void setUpMonth() {
         monthMap.put("January", "01");
         monthMap.put("February", "02");
         monthMap.put("March", "03");
@@ -37,98 +79,54 @@ public class RegForm extends javax.swing.JFrame {
         monthMap.put("October", "10");
         monthMap.put("November", "11");
         monthMap.put("December", "12");
-        initComponents();
-        updateDay();
     }
 
-    Connection con;
-    PreparedStatement pst;
-    ResultSet rs;
+    public static boolean existingEmail(String email) {
+        String query = "SELECT email FROM registration WHERE email = ?";
+        PreparedStatement pst;
+        ResultSet rs;
 
-    public void Connect() {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost/athleteform", "root", "");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-
-        }
-    }
-
-    public static void simpleHighlightComponent(Component component) {
-        if (component instanceof JTextField || component instanceof JPasswordField || component instanceof JComboBox
-                || component instanceof JRadioButton) {
-            Border highlightBorder;
-
-            highlightBorder = new LineBorder(Color.RED);
-
-            if (component instanceof JTextField) {
-                JTextField textField = (JTextField) component;
-                textField.setBorder(highlightBorder);
-            } else if (component instanceof JPasswordField) {
-                JPasswordField passwordField = (JPasswordField) component;
-                passwordField.setBorder(highlightBorder);
-            } else if (component instanceof JComboBox) {
-                JComboBox<?> comboBox = (JComboBox<?>) component;
-                comboBox.setBorder(highlightBorder);
-            } else if (component instanceof JRadioButton) {
-                JRadioButton radioButton = (JRadioButton) component;
-                radioButton.setBorder(highlightBorder);
-            }
-        }
-
-    }
-
-    public static void highlightComponent(Component component, boolean highlight, boolean hasInput) {
-        if (component instanceof JTextField || component instanceof JPasswordField || component instanceof JComboBox
-                || component instanceof JRadioButton) {
-            Border highlightBorder;
-            if (hasInput) {
-                highlightBorder = new LineBorder(Color.BLACK);
+            pst = con.prepareStatement(query);
+            pst.setString(1, email);
+            rs = pst.executeQuery();
+            if (rs.isBeforeFirst()) {
+                return true;
             } else {
-                highlightBorder = new LineBorder(Color.RED);
+                return false;
             }
-            Border defaultBorder = new LineBorder(Color.WHITE);
-
-            if (component instanceof JTextField) {
-                JTextField textField = (JTextField) component;
-                if (highlight) {
-                    textField.setBorder(highlightBorder);
-                } else {
-                    textField.setBorder(defaultBorder);
-                }
-            } else if (component instanceof JPasswordField) {
-                JPasswordField passwordField = (JPasswordField) component;
-                if (highlight) {
-                    passwordField.setBorder(highlightBorder);
-                } else {
-                    passwordField.setBorder(defaultBorder);
-                }
-            } else if (component instanceof JComboBox) {
-                JComboBox<?> comboBox = (JComboBox<?>) component;
-                if (highlight) {
-                    comboBox.setBorder(highlightBorder);
-                } else {
-                    comboBox.setBorder(defaultBorder);
-                }
-            } else if (component instanceof JRadioButton) {
-                JRadioButton radioButton = (JRadioButton) component;
-                if (highlight) {
-                    radioButton.setBorder(highlightBorder);
-                } else {
-                    radioButton.setBorder(defaultBorder);
-                }
-            }
+        } catch (SQLException err) {
+            err.printStackTrace();
         }
+
+        return false;
     }
 
-    private void GenderSelect() {
+    public static boolean validEmail(String email) {
+        int atIndex = email.indexOf('@');
+        int periodIndex = email.lastIndexOf('.');
+        int space = email.indexOf(' ');
+
+        if (atIndex == -1 || periodIndex == -1 || space != -1) {
+            return false;
+        } else if (atIndex > periodIndex) {
+            return false;
+        } else if (periodIndex == (email.length() - 1)) {
+            return false;
+        } else if (periodIndex == (atIndex + 1)) {
+            return false;
+        }
+        return true;
+
+    }
+
+    private String GenderSelect() {
         if (radioFemale.isSelected()) {
-            String gender = "Female";
+            return "Female";
+        } else if (radioMale.isSelected()) {
+            return "Male";
         } else {
-            String gender = "male";
+            return "";
         }
     }
 
@@ -174,26 +172,26 @@ public class RegForm extends javax.swing.JFrame {
 
     }
 
-    public static String encryptPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-            md.update(password.getBytes());
-
-            byte[] hashedBytes = md.digest();
-
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashedBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
@@ -226,18 +224,14 @@ public class RegForm extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        radioMale = new javax.swing.JRadioButton();
-        radioFemale = new javax.swing.JRadioButton();
-        jLabel14 = new javax.swing.JLabel();
+        lblSex = new javax.swing.JLabel();
         txtGfname = new javax.swing.JTextField();
         txtGcontact = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         txtGemail = new javax.swing.JTextField();
-        txtTypes = new javax.swing.JTextField();
-        jLabel16 = new javax.swing.JLabel();
+        lblSport = new javax.swing.JLabel();
         comboYear = new javax.swing.JComboBox<>();
         jLabel17 = new javax.swing.JLabel();
-        txtCampus = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
@@ -247,7 +241,20 @@ public class RegForm extends javax.swing.JFrame {
         comboCourse = new javax.swing.JComboBox<>();
         txtPassword = new javax.swing.JPasswordField();
         txtCPW = new javax.swing.JPasswordField();
+        txtUsernameError = new javax.swing.JLabel();
+        comboSport = new javax.swing.JComboBox<>();
+        comboCampus = new javax.swing.JComboBox<>();
+        pnlGender = new javax.swing.JPanel();
+        radioMale = new javax.swing.JRadioButton();
+        radioFemale = new javax.swing.JRadioButton();
         txtError = new javax.swing.JLabel();
+        txtGEmailError = new javax.swing.JLabel();
+        txtEmailError = new javax.swing.JLabel();
+        txtGContactError = new javax.swing.JLabel();
+        txtPasswordError = new javax.swing.JLabel();
+        txtContactError = new javax.swing.JLabel();
+        txtDobError = new javax.swing.JLabel();
+        txtContactError2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -266,24 +273,42 @@ public class RegForm extends javax.swing.JFrame {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("FIRST NAME");
 
+        txtFname.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtFname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtFnameActionPerformed(evt);
+            }
+        });
+        txtFname.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtFnameKeyTyped(evt);
             }
         });
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("LAST  NAME");
 
+        txtLname.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtLname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtLnameActionPerformed(evt);
             }
         });
+        txtLname.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtLnameKeyTyped(evt);
+            }
+        });
 
+        txtContact.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtContact.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtContactActionPerformed(evt);
+            }
+        });
+        txtContact.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtContactKeyTyped(evt);
             }
         });
 
@@ -293,6 +318,7 @@ public class RegForm extends javax.swing.JFrame {
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("EMAIL");
 
+        txtEmail.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEmailActionPerformed(evt);
@@ -302,6 +328,7 @@ public class RegForm extends javax.swing.JFrame {
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel8.setText("USERNAME");
 
+        txtUname.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtUname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUnameActionPerformed(evt);
@@ -311,9 +338,15 @@ public class RegForm extends javax.swing.JFrame {
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel9.setText("ADDRESS");
 
+        txtAddress.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtAddress.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtAddressActionPerformed(evt);
+            }
+        });
+        txtAddress.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtAddressKeyTyped(evt);
             }
         });
 
@@ -322,14 +355,15 @@ public class RegForm extends javax.swing.JFrame {
 
         comboDobMonth.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "January", "February", "March",
                 "April", "May", "June", "July", "August", "September", "October", "November ", "Decmber" }));
+        comboDobMonth.setBorder(null);
         comboDobMonth.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboDobMonthActionPerformed(evt);
             }
         });
 
-        comboDobYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1995", "1996", "1997", "1998",
-                "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010" }));
+        comboDobYear.setModel(new javax.swing.DefaultComboBoxModel<>(dateYearSetup));
+        comboDobYear.setBorder(null);
         comboDobYear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboDobYearActionPerformed(evt);
@@ -348,64 +382,64 @@ public class RegForm extends javax.swing.JFrame {
         jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel13.setText("CONTACT NO.");
 
-        radioMale.setText("MALE");
-        radioMale.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                radioMaleActionPerformed(evt);
-            }
-        });
+        lblSex.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSex.setText("SEX");
 
-        radioFemale.setText("FEMALE");
-        radioFemale.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                radioFemaleActionPerformed(evt);
-            }
-        });
-
-        jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel14.setText("GENDER");
-
+        txtGfname.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtGfname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtGfnameActionPerformed(evt);
             }
         });
+        txtGfname.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtGfnameKeyTyped(evt);
+            }
+        });
 
+        txtGcontact.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtGcontact.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                txtGcontactInputMethodTextChanged(evt);
+            }
+        });
         txtGcontact.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtGcontactActionPerformed(evt);
+            }
+        });
+        txtGcontact.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtGcontactKeyPressed(evt);
+            }
+
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtGcontactKeyTyped(evt);
             }
         });
 
         jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel15.setText("EMAIL");
 
+        txtGemail.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtGemail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtGemailActionPerformed(evt);
             }
         });
 
-        txtTypes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTypesActionPerformed(evt);
-            }
-        });
-
-        jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel16.setText("TYPES OF SPORT");
+        lblSport.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSport.setText("TYPES OF SPORT");
 
         comboYear.setModel(new javax.swing.DefaultComboBoxModel<>(
                 new String[] { "1ST YEAR", "2ND YEAR", "3RD YEAR", "4TH YEAR" }));
+        comboYear.setBorder(null);
 
         jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel17.setText("COURSE");
-
-        txtCampus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCampusActionPerformed(evt);
-            }
-        });
 
         jLabel18.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel18.setText("CAMPUS");
@@ -430,6 +464,7 @@ public class RegForm extends javax.swing.JFrame {
 
         comboDobDay.setModel(
                 new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboDobDay.setBorder(null);
 
         switchLogin.setText("Login Instead");
         switchLogin.addActionListener(new java.awt.event.ActionListener() {
@@ -452,20 +487,100 @@ public class RegForm extends javax.swing.JFrame {
                 "CPADM",
                 "LHS"
         }));
+        comboCourse.setBorder(null);
         comboCourse.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboCourseActionPerformed(evt);
             }
         });
 
+        txtPassword.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPasswordActionPerformed(evt);
             }
         });
 
+        txtCPW.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtUsernameError.setForeground(new java.awt.Color(255, 0, 0));
+        txtUsernameError.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        comboSport
+                .setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Athletics", "Badminton", "Basketball",
+                        "Futsal", "Sepak Takraw", "Soccer", "Softball", "Swimming", "Table Tennis", "Volleyball" }));
+        comboSport.setBorder(null);
+
+        comboCampus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {
+                "General Tinio Street Campus",
+                "Sumacab Campus",
+                "San Isidro Campus",
+                "Gabaldon Campus",
+                "Atate Campus",
+                "Fort Magsaysay Campus",
+                "Off Campuses"
+        }));
+        comboCampus.setBorder(null);
+
+        pnlGender.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(214, 217, 223)));
+
+        radioMale.setText("MALE");
+        radioMale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioMaleActionPerformed(evt);
+            }
+        });
+
+        radioFemale.setText("FEMALE");
+        radioFemale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioFemaleActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlGenderLayout = new javax.swing.GroupLayout(pnlGender);
+        pnlGender.setLayout(pnlGenderLayout);
+        pnlGenderLayout.setHorizontalGroup(
+                pnlGenderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGenderLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(radioMale)
+                                .addGap(18, 18, 18)
+                                .addComponent(radioFemale)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+        pnlGenderLayout.setVerticalGroup(
+                pnlGenderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlGenderLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(
+                                        pnlGenderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(radioMale)
+                                                .addComponent(radioFemale))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+
+        txtError.setForeground(new java.awt.Color(255, 0, 0));
         txtError.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        txtError.setText(".");
+
+        txtGEmailError.setForeground(new java.awt.Color(255, 0, 0));
+        txtGEmailError.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        txtEmailError.setForeground(new java.awt.Color(255, 0, 0));
+        txtEmailError.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        txtGContactError.setForeground(new java.awt.Color(255, 0, 0));
+        txtGContactError.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        txtPasswordError.setForeground(new java.awt.Color(255, 0, 0));
+        txtPasswordError.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        txtContactError.setForeground(new java.awt.Color(255, 0, 0));
+        txtContactError.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        txtDobError.setForeground(new java.awt.Color(255, 0, 0));
+        txtDobError.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        txtContactError2.setForeground(new java.awt.Color(255, 0, 0));
+        txtContactError2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -474,233 +589,241 @@ public class RegForm extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE,
                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
+                                .addGap(19, 19, 19)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout
-                                                .createSequentialGroup()
-                                                .addContainerGap(34, Short.MAX_VALUE)
-                                                .addGroup(layout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                        .addGroup(layout.createSequentialGroup()
-                                                                .addComponent(jLabel4)
-                                                                .addGap(194, 194, 194))
-                                                        .addGroup(layout
-                                                                .createParallelGroup(
-                                                                        javax.swing.GroupLayout.Alignment.LEADING)
-                                                                .addComponent(jLabel9)
-                                                                .addComponent(txtAddress,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 260,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                        .addGroup(layout
-                                                                .createParallelGroup(
-                                                                        javax.swing.GroupLayout.Alignment.LEADING)
-                                                                .addComponent(jLabel6)
-                                                                .addComponent(txtContact,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 260,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                        .addComponent(txtUname, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGroup(layout
-                                                                .createParallelGroup(
-                                                                        javax.swing.GroupLayout.Alignment.LEADING)
-                                                                .addComponent(jLabel7)
-                                                                .addComponent(txtEmail,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 260,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addComponent(txtLname,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 260,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addComponent(jLabel5)
-                                                                .addComponent(jLabel8))
-                                                        .addComponent(txtFname, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                260, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGap(19, 19, 19)
-                                                .addGroup(layout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-                                                                false)
-                                                        .addGroup(layout.createSequentialGroup()
-                                                                .addComponent(comboDobDay,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(
-                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(comboDobMonth,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(
-                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                .addComponent(comboDobYear,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                        .addComponent(jLabel10,
-                                                                javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jLabel14,
-                                                                javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout
-                                                                .createSequentialGroup()
-                                                                .addComponent(radioMale)
-                                                                .addPreferredGap(
-                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                .addComponent(radioFemale))
-                                                        .addComponent(btnRegister,
-                                                                javax.swing.GroupLayout.Alignment.LEADING,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(txtError,
-                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                        .addComponent(txtFname, javax.swing.GroupLayout.PREFERRED_SIZE, 260,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 260,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jLabel9)
+                                                .addComponent(txtContact, javax.swing.GroupLayout.PREFERRED_SIZE, 260,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(jLabel6)
+                                                        .addGap(18, 18, 18)
+                                                        .addComponent(txtContactError,
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                                .addGap(0, 0, Short.MAX_VALUE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout
-                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(txtUname, javax.swing.GroupLayout.PREFERRED_SIZE, 260,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(jLabel8)
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addComponent(txtUsernameError,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addComponent(txtEmail, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 260,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(jLabel7)
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(txtEmailError,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 189,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(txtLname, javax.swing.GroupLayout.PREFERRED_SIZE, 260,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jLabel5)
+                                                .addComponent(pnlGender, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(txtError, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout
                                                         .createSequentialGroup()
-                                                        .addGroup(layout
-                                                                .createParallelGroup(
-                                                                        javax.swing.GroupLayout.Alignment.LEADING)
-                                                                .addComponent(jLabel16)
-                                                                .addComponent(jLabel17)
-                                                                .addComponent(txtCampus,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 274,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addComponent(jLabel18)
-                                                                .addGroup(layout.createParallelGroup(
-                                                                        javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                        .addGroup(layout.createParallelGroup(
-                                                                                javax.swing.GroupLayout.Alignment.TRAILING,
-                                                                                false)
-                                                                                .addGroup(layout.createSequentialGroup()
-                                                                                        .addComponent(comboCourse, 0,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                Short.MAX_VALUE)
-                                                                                        .addPreferredGap(
-                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                                        .addComponent(comboYear,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                                .addComponent(txtTypes,
-                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                        274,
-                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                        .addGroup(layout.createParallelGroup(
-                                                                                javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                .addComponent(jLabel12)
-                                                                                .addComponent(txtGfname,
-                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                        274,
-                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                .addComponent(jLabel13)
-                                                                                .addComponent(txtGcontact,
-                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                        274,
-                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                .addComponent(jLabel15)
-                                                                                .addComponent(txtGemail,
-                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                        274,
-                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                        .addComponent(switchLogin)
-                                                                        .addComponent(txtPassword,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                274,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                        .addComponent(txtCPW,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                274,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                        .addGap(34, 34, 34))
+                                                        .addComponent(comboDobDay,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(comboDobMonth,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addComponent(comboDobYear,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addGroup(layout.createSequentialGroup()
-                                                        .addGroup(layout
-                                                                .createParallelGroup(
-                                                                        javax.swing.GroupLayout.Alignment.LEADING)
-                                                                .addComponent(jLabel19)
-                                                                .addComponent(jLabel20))
-                                                        .addContainerGap()))
+                                                        .addComponent(jLabel10)
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(txtDobError,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 145,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(lblSex)
+                                                .addComponent(btnRegister, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(jLabel4))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26,
+                                        Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
                                                 layout.createSequentialGroup()
                                                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(96, 96, 96))))
+                                                        .addGap(96, 96, 96))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout
+                                                .createSequentialGroup()
+                                                .addGroup(layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addComponent(comboCampus,
+                                                                javax.swing.GroupLayout.Alignment.LEADING, 0,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(comboSport, 0,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addGap(34, 34, 34))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel20)
+                                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout
+                                                .createSequentialGroup()
+                                                .addGroup(layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(jLabel13)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(txtGContactError,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE))
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(jLabel19)
+                                                                .addGap(22, 22, 22)
+                                                                .addComponent(txtPasswordError,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE))
+                                                        .addComponent(txtGfname,
+                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(txtGcontact,
+                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout
+                                                                .createSequentialGroup()
+                                                                .addComponent(jLabel15)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE)
+                                                                .addComponent(txtGEmailError,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 189,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(txtGemail,
+                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(txtPassword)
+                                                        .addComponent(txtCPW)
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout
+                                                                .createSequentialGroup()
+                                                                .addGroup(layout.createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                        .addComponent(lblSport,
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jLabel17,
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jLabel18,
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jLabel12,
+                                                                                javax.swing.GroupLayout.Alignment.LEADING))
+                                                                .addGap(0, 0, Short.MAX_VALUE))
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                                .addGroup(layout.createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                        .addGroup(layout.createSequentialGroup()
+                                                                                .addComponent(comboCourse,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                        196,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addPreferredGap(
+                                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(comboYear,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                        .addComponent(switchLogin))))
+                                                .addGap(34, 34, 34))))
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(238, 238, 238)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 108,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                        .addGap(100, 100, 100)
+                                        .addComponent(txtContactError2, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGap(324, 324, 324))));
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30,
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26,
                                         Short.MAX_VALUE)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblSport)
+                                        .addComponent(jLabel4))
+                                .addGap(6, 6, 6)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout
-                                                .createSequentialGroup()
-                                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addGroup(layout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                        .addGroup(layout.createSequentialGroup()
-                                                                .addComponent(jLabel16)
-                                                                .addPreferredGap(
-                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addGroup(layout.createParallelGroup(
-                                                                        javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                        .addComponent(txtTypes,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                        .addComponent(txtFname,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                .addGap(11, 11, 11)
-                                                                .addComponent(jLabel5)
-                                                                .addGap(1, 1, 1))
-                                                        .addComponent(jLabel18))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(layout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(txtCampus, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(txtLname, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jLabel17)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(layout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(comboYear, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(comboCourse,
-                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGap(11, 11, 11))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-                                                layout.createSequentialGroup()
-                                                        .addComponent(jLabel4)
-                                                        .addGap(96, 96, 96)
-                                                        .addComponent(jLabel7)
-                                                        .addGap(40, 40, 40)))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(comboSport, javax.swing.GroupLayout.PREFERRED_SIZE, 22,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(layout.createSequentialGroup()
-                                                .addGap(6, 6, 6)
-                                                .addComponent(jLabel19))
-                                        .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE, 16,
+                                                .addGap(1, 1, 1)
+                                                .addComponent(txtFname, javax.swing.GroupLayout.PREFERRED_SIZE, 21,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(txtLname, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(comboCampus, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(jLabel17)
+                                                .addComponent(jLabel7))
+                                        .addComponent(txtEmailError, javax.swing.GroupLayout.PREFERRED_SIZE, 23,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(comboYear, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(comboCourse, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 21,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(10, 10, 10)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel19)
+                                                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(txtPasswordError, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE, 23,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtUsernameError, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE, 23,
                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -710,10 +833,13 @@ public class RegForm extends javax.swing.JFrame {
                                         .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jLabel6)
-                                        .addComponent(jLabel20))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(jLabel6)
+                                                .addComponent(jLabel20))
+                                        .addComponent(txtContactError, javax.swing.GroupLayout.PREFERRED_SIZE, 23,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(txtContact, javax.swing.GroupLayout.PREFERRED_SIZE,
@@ -722,40 +848,65 @@ public class RegForm extends javax.swing.JFrame {
                                         .addComponent(txtCPW, javax.swing.GroupLayout.PREFERRED_SIZE,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(layout.createSequentialGroup()
+                                                .addGap(19, 19, 19)
                                                 .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 16,
                                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE,
                                                         javax.swing.GroupLayout.DEFAULT_SIZE,
                                                         javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE, 26,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                layout.createSequentialGroup()
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                26, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addComponent(jLabel12)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtGfname, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jLabel13)
+                                                .addGroup(layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(txtGfname,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(jLabel13))
+                                                        .addComponent(txtGContactError,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 23,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtGcontact, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jLabel15)
+                                                .addGroup(layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(txtGcontact,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(jLabel15))
+                                                        .addComponent(txtGEmailError,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 23,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(txtGemail, javax.swing.GroupLayout.PREFERRED_SIZE,
                                                         javax.swing.GroupLayout.DEFAULT_SIZE,
                                                         javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel10)
+                                                .addGroup(layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel10)
+                                                        .addComponent(txtDobError,
+                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 23,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addGroup(layout
                                                         .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -772,38 +923,107 @@ public class RegForm extends javax.swing.JFrame {
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jLabel14)
+                                                .addComponent(lblSex)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(pnlGender, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addGroup(layout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(radioMale)
-                                                        .addComponent(radioFemale))
-                                                .addGap(18, 18, 18)
                                                 .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 32,
                                                         javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(switchLogin)
-                                        .addComponent(txtError))
-                                .addContainerGap(8, Short.MAX_VALUE)));
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(switchLogin)
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                        .addComponent(txtError, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addContainerGap(371, Short.MAX_VALUE)
+                                        .addComponent(txtContactError2, javax.swing.GroupLayout.PREFERRED_SIZE, 23,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(275, 275, 275))));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtGfnameKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtGfnameKeyTyped
+        if (txtGfname.getText().length() != 0) {
+            char c = evt.getKeyChar();
+            if (c == ' ' && txtGfname.getText().charAt(txtGfname.getText().length() - 1) == ' ') {
+                evt.consume();
+            }
+        }
+    }// GEN-LAST:event_txtGfnameKeyTyped
+
+    private void txtAddressKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtAddressKeyTyped
+        if (txtAddress.getText().length() != 0) {
+            char c = evt.getKeyChar();
+            if (c == ' ' && txtAddress.getText().charAt(txtAddress.getText().length() - 1) == ' ') {
+                evt.consume();
+            }
+        }
+    }// GEN-LAST:event_txtAddressKeyTyped
+
+    private void txtLnameKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtLnameKeyTyped
+        if (txtLname.getText().length() != 0) {
+            char c = evt.getKeyChar();
+            if (c == ' ' && txtLname.getText().charAt(txtLname.getText().length() - 1) == ' ') {
+                evt.consume();
+            }
+        }
+    }// GEN-LAST:event_txtLnameKeyTyped
+
+    private void txtFnameKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtFnameKeyTyped
+        if (txtFname.getText().length() != 0) {
+            char c = evt.getKeyChar();
+            if (c == ' ' && txtFname.getText().charAt(txtFname.getText().length() - 1) == ' ') {
+                evt.consume();
+            }
+        }
+    }// GEN-LAST:event_txtFnameKeyTyped
+
+    private void txtContactKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtContactKeyTyped
+        char c = evt.getKeyChar();
+        if (!(Character.isDigit(c))) {
+            evt.consume();
+        } else if (txtContact.getText().length() == 11) {
+            evt.consume();
+        }
+    }// GEN-LAST:event_txtContactKeyTyped
+
+    private void txtGcontactKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtGcontactKeyTyped
+        char c = evt.getKeyChar();
+        if ((Character.isLetter(c))) {
+            evt.consume();
+        } else if (txtGcontact.getText().length() == 11) {
+            evt.consume();
+        }
+    }// GEN-LAST:event_txtGcontactKeyTyped
+
+    private void txtGcontactInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {// GEN-FIRST:event_txtGcontactInputMethodTextChanged
+
+    }// GEN-LAST:event_txtGcontactInputMethodTextChanged
+
+    private void txtGcontactKeyPressed(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtGcontactKeyPressed
+    }// GEN-LAST:event_txtGcontactKeyPressed
 
     private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtPasswordActionPerformed
         // TODO add your handling code here:
     }// GEN-LAST:event_txtPasswordActionPerformed
 
     private void comboCourseActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_comboCourseActionPerformed
-        if (comboCourse.getSelectedItem().toString() == "College of Architecture") {
-            DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) comboYear.getModel();
-            model.addElement("5TH YEAR");
+        if (comboCourse.getSelectedItem().toString() == "COArch") {
+            comboYear.setModel(new javax.swing.DefaultComboBoxModel<>(
+                    new String[] { "1ST YEAR", "2ND YEAR", "3RD YEAR", "4TH YEAR", "5TH YEAR" }));
+        } else if (comboCourse.getSelectedItem().toString() == "LHS") {
+            comboYear.setModel(new javax.swing.DefaultComboBoxModel<>(
+                    new String[] { "JHS", "SHS" }));
         } else {
-            DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) comboYear.getModel();
-
-            if (model.getSize() > 4) {
-                model.removeElementAt(4);
-            }
+            comboYear.setModel(new javax.swing.DefaultComboBoxModel<>(
+                    new String[] { "1ST YEAR", "2ND YEAR", "3RD YEAR", "4TH YEAR" }));
         }
     }// GEN-LAST:event_comboCourseActionPerformed
 
@@ -816,6 +1036,7 @@ public class RegForm extends javax.swing.JFrame {
         if (radioFemale.isSelected()) {
             radioMale.setSelected(false);
         }
+        pnlGender.setBorder(null);
     }// GEN-LAST:event_radioFemaleActionPerformed
 
     private void txtFnameActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtFnameActionPerformed
@@ -847,10 +1068,10 @@ public class RegForm extends javax.swing.JFrame {
     }// GEN-LAST:event_comboDobMonthActionPerformed
 
     private void radioMaleActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_radioMaleActionPerformed
-        // TODO add your handling code here:
         if (radioMale.isSelected()) {
             radioFemale.setSelected(false);
         }
+
     }// GEN-LAST:event_radioMaleActionPerformed
 
     private void txtGfnameActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtGfnameActionPerformed
@@ -886,7 +1107,16 @@ public class RegForm extends javax.swing.JFrame {
     }// GEN-LAST:event_txtYearActionPerformed
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnRegisterActionPerformed
-        Connect();
+        con = Commands.Connect(con);
+        boolean errTrigger = false;
+        txtError.setText("");
+        txtEmailError.setText("");
+        txtGEmailError.setText("");
+        txtContactError.setText("");
+        txtGContactError.setText("");
+        txtPasswordError.setText("");
+        txtUsernameError.setText("");
+        txtDobError.setText("");
 
         String firstname = txtFname.getText();
         String lastname = txtLname.getText();
@@ -897,10 +1127,15 @@ public class RegForm extends javax.swing.JFrame {
         String dob = comboDobYear.getSelectedItem().toString() + "-"
                 + monthMap.get(comboDobMonth.getSelectedItem().toString()) + "-"
                 + comboDobDay.getSelectedItem().toString();
-        Date date = Date.valueOf(dob);
-        GenderSelect();
-        String types = txtTypes.getText();
-        String campus = txtCampus.getText();
+        int yearCheck = Integer.parseInt(comboDobYear.getSelectedItem().toString());
+        int monthCheck = Integer.parseInt(monthMap.get(comboDobMonth.getSelectedItem().toString()));
+        int dateCheck = Integer.parseInt(comboDobDay.getSelectedItem().toString());
+        java.sql.Date date = java.sql.Date.valueOf(dob);
+        String gender = GenderSelect();
+        String sport = comboSport.getSelectedItem().toString();
+        String campus = comboCampus.getSelectedItem().toString();
+        String course = comboCourse.getSelectedItem().toString();
+        int year = comboYear.getSelectedIndex() + 1;
 
         char[] password = txtPassword.getPassword();
         String passwords = new String(password);
@@ -912,51 +1147,153 @@ public class RegForm extends javax.swing.JFrame {
         String guardian_contact = txtGcontact.getText();
         String guardian_email = txtGemail.getText();
 
-        // ... [The rest of your initializations and code above] ...
+        if (firstname.isBlank() || lastname.isBlank() || email.isBlank() ||
+                username.isBlank() || contact.isBlank() || address.isBlank() ||
+                dob.isBlank() || gender.isBlank() || sport.isBlank() || campus.isBlank() ||
+                passwords.isBlank() || cpasswords.isBlank() ||
+                guardian_firstname.isBlank() || guardian_contact.isBlank() || guardian_email.isBlank()) {
 
-        // Check for empty fields and highlight them
-        if (firstname.isEmpty() || lastname.isEmpty() || email.isEmpty() ||
-                username.isEmpty() || contact.isEmpty() || address.isEmpty() ||
-                dob.isEmpty() || types.isEmpty() || campus.isEmpty() ||
-                passwords.isEmpty() || cpasswords.isEmpty() ||
-                guardian_firstname.isEmpty() || guardian_contact.isEmpty() || guardian_email.isEmpty()) {
+            if (firstname.isBlank())
+                Commands.simpleHighlightComponent(txtFname);
+            if (lastname.isBlank())
+                Commands.simpleHighlightComponent(txtLname);
+            if (email.isBlank())
+                Commands.simpleHighlightComponent(txtEmail);
+            if (username.isBlank())
+                Commands.simpleHighlightComponent(txtUname);
+            if (contact.isBlank())
+                Commands.simpleHighlightComponent(txtContact);
+            if (address.isBlank())
+                Commands.simpleHighlightComponent(txtAddress);
+            if (gender.isBlank()) {
+                System.out.println("this runs");
+                Commands.simpleHighlightComponent(pnlGender);
+            }
+            if (comboDobYear.getSelectedItem().toString().isBlank())
+                Commands.simpleHighlightComponent(comboDobYear);
+            if (comboDobMonth.getSelectedItem().toString().isBlank())
+                Commands.simpleHighlightComponent(comboDobMonth);
+            if (comboDobDay.getSelectedItem().toString().isBlank())
+                Commands.simpleHighlightComponent(comboDobDay);
+            if (comboSport.getSelectedItem().toString().isBlank())
+                Commands.simpleHighlightComponent(comboDobDay);
+            if (comboCampus.getSelectedItem().toString().isBlank())
+                Commands.simpleHighlightComponent(comboDobDay);
+            if (passwords.isBlank())
+                Commands.simpleHighlightComponent(txtPassword);
+            if (cpasswords.isBlank())
+                Commands.simpleHighlightComponent(txtCPW);
+            if (guardian_firstname.isBlank())
+                Commands.simpleHighlightComponent(txtGfname);
+            if (guardian_contact.isBlank())
+                Commands.simpleHighlightComponent(txtGcontact);
+            if (guardian_email.isBlank())
+                Commands.simpleHighlightComponent(txtGemail);
+            txtError.setText("Empty Field/s");
+            errTrigger = true;
+        }
+        if (!passwords.equals(cpasswords)) {
+            Commands.simpleHighlightComponent(txtPassword);
+            Commands.simpleHighlightComponent(txtCPW);
+            txtPasswordError.setText("Non Matching Passwords!");
+            errTrigger = true;
+        }
+        if (contact.length() != 11) {
+            txtContactError.setText("Must Use 11 Digit Format!");
+            errTrigger = true;
+        }
+        if (guardian_contact.length() != 11) {
+            txtGContactError.setText("Must Use 11 Digit Format!");
+            errTrigger = true;
+        }
+        if (yearCheck > yearNow) {
+            txtDobError.setText("Future Date!");
+            errTrigger = true;
+        } else if (yearCheck == yearNow) {
+            if (monthCheck > monthNow) {
+                txtDobError.setText("Future Date!");
+                errTrigger = true;
+            } else if (monthCheck == monthNow) {
+                if (dateCheck > dateNow) {
+                    txtDobError.setText("Future Date!");
+                    errTrigger = true;
+                }
+            }
+        }
+        if (passwords.length() < 8) {
+            txtPasswordError.setText("Minimum 8 characters");
+            errTrigger = true;
+        }
+        if (!validEmail(email)) {
+            Commands.simpleHighlightComponent(txtEmail);
+            txtEmailError.setText("Invalid Email Format");
+            errTrigger = true;
+        }
+        if (!validEmail(guardian_email)) {
+            Commands.simpleHighlightComponent(txtGemail);
+            txtGEmailError.setText("Invalid Email Format");
+            errTrigger = true;
+        }
+        if (Commands.existingUser(username)) {
+            Commands.simpleHighlightComponent(txtUname);
+            txtUsernameError.setText("Username Already Exists!");
+            errTrigger = true;
+        }
+        if (existingEmail(email)) {
+            Commands.simpleHighlightComponent(txtEmail);
+            txtEmailError.setText("Email Already Exists!");
+            errTrigger = true;
+        }
 
-            if (firstname.isEmpty())
-                simpleHighlightComponent(txtFname);
-            if (lastname.isEmpty())
-                simpleHighlightComponent(txtLname);
-            if (email.isEmpty())
-                simpleHighlightComponent(txtEmail);
-            if (username.isEmpty())
-                simpleHighlightComponent(txtUname);
-            if (contact.isEmpty())
-                simpleHighlightComponent(txtContact);
-            if (address.isEmpty())
-                simpleHighlightComponent(txtAddress);
-            // Assuming comboDobYear, comboDobMonth, and comboDobDay are JComboBoxes
-            if (comboDobYear.getSelectedItem().toString().isEmpty())
-                simpleHighlightComponent(comboDobYear);
-            if (comboDobMonth.getSelectedItem().toString().isEmpty())
-                simpleHighlightComponent(comboDobMonth);
-            if (comboDobDay.getSelectedItem().toString().isEmpty())
-                simpleHighlightComponent(comboDobDay);
-            if (types.isEmpty())
-                simpleHighlightComponent(txtTypes);
-            if (campus.isEmpty())
-                simpleHighlightComponent(txtCampus);
-            if (passwords.isEmpty())
-                simpleHighlightComponent(txtPassword);
-            if (cpasswords.isEmpty())
-                simpleHighlightComponent(txtCPW);
-            if (guardian_firstname.isEmpty())
-                simpleHighlightComponent(txtGfname);
-            if (guardian_contact.isEmpty())
-                simpleHighlightComponent(txtGcontact);
-            if (guardian_email.isEmpty())
-                simpleHighlightComponent(txtGemail);
+        if (!errTrigger) {
+            String encryptedPassword = BCrypt.hashpw(new String(password), BCrypt.gensalt());
+            String query = "INSERT INTO REGISTRATION (first_name, last_name, date_of_birth, email, username, contact, address, gender, type_of_sport, course, year, parent_guardian_name, parent_guardian_contact, parent_guardian_email, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            PreparedStatement pst;
+            ResultSet rs;
 
-            // Return or exit the method if validation fails
-            return;
+            try {
+                pst = con.prepareStatement(query);
+
+                pst.setString(1, firstname);
+                pst.setString(2, lastname);
+                pst.setDate(3, date);
+                pst.setString(4, email);
+                pst.setString(5, username);
+                pst.setString(6, contact);
+                pst.setString(7, address);
+                pst.setString(8, gender);
+                pst.setString(9, sport);
+                pst.setString(10, course);
+                pst.setInt(11, year);
+                pst.setString(12, guardian_firstname);
+                pst.setString(13, guardian_contact);
+                pst.setString(14, guardian_email);
+                pst.setString(15, encryptedPassword);
+
+                pst.executeUpdate();
+            } catch (SQLException err) {
+                err.printStackTrace();
+            }
+            JOptionPane.showMessageDialog(null, "Registered Successfuly");
+            new LogForm().setVisible(true);
+            this.dispose();
+            // txtUname.setText("");
+            // txtFname.setText("");
+            // txtLname.setText("");
+            // txtEmail.setText("");
+            // txtContact.setText("");
+            // txtAddress.setText("");
+            // radioMale.setSelected(false);
+            // radioFemale.setSelected(false);
+            // comboSport.setSelectedIndex(0);
+            // comboCampus.setSelectedIndex(0);
+            // comboCourse.setSelectedIndex(0);
+            // comboYear.setSelectedIndex(0);
+            // txtPassword.setText("");
+            // txtCPW.setText("");
+            // txtGfname.setText("");
+            // txtGcontact.setText("");
+            // txtGemail.setText("");
         }
 
         // Continue with the rest of the code if validation passes
@@ -1015,19 +1352,19 @@ public class RegForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegister;
+    private javax.swing.JComboBox<String> comboCampus;
     private javax.swing.JComboBox<String> comboCourse;
     private javax.swing.JComboBox<String> comboDobDay;
     private javax.swing.JComboBox<String> comboDobMonth;
     private javax.swing.JComboBox<String> comboDobYear;
+    private javax.swing.JComboBox<String> comboSport;
     private javax.swing.JComboBox<String> comboYear;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
@@ -1039,22 +1376,31 @@ public class RegForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel lblSex;
+    private javax.swing.JLabel lblSport;
+    private javax.swing.JPanel pnlGender;
     private javax.swing.JRadioButton radioFemale;
     private javax.swing.JRadioButton radioMale;
     private javax.swing.JButton switchLogin;
     private javax.swing.JTextField txtAddress;
     private javax.swing.JPasswordField txtCPW;
-    private javax.swing.JTextField txtCampus;
     private javax.swing.JTextField txtContact;
+    private javax.swing.JLabel txtContactError;
+    private javax.swing.JLabel txtContactError2;
+    private javax.swing.JLabel txtDobError;
     private javax.swing.JTextField txtEmail;
+    private javax.swing.JLabel txtEmailError;
     private javax.swing.JLabel txtError;
     private javax.swing.JTextField txtFname;
+    private javax.swing.JLabel txtGContactError;
+    private javax.swing.JLabel txtGEmailError;
     private javax.swing.JTextField txtGcontact;
     private javax.swing.JTextField txtGemail;
     private javax.swing.JTextField txtGfname;
     private javax.swing.JTextField txtLname;
     private javax.swing.JPasswordField txtPassword;
-    private javax.swing.JTextField txtTypes;
+    private javax.swing.JLabel txtPasswordError;
     private javax.swing.JTextField txtUname;
+    private javax.swing.JLabel txtUsernameError;
     // End of variables declaration//GEN-END:variables
 }

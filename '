@@ -1,7 +1,6 @@
 
 import java.sql.*;
 import javax.swing.event.*;
-import javax.swing.JOptionPane;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -20,7 +19,6 @@ public class LogForm extends javax.swing.JFrame {
     public LogForm() {
         initComponents();
         setResizable(false);
-        setLocationRelativeTo(null);
 
         Commands.attachDeHighlightListener(txtUsernameLog);
         Commands.attachDeHighlightListener(txtPasswordLog);
@@ -228,8 +226,7 @@ public class LogForm extends javax.swing.JFrame {
         if (username.isBlank() || passwordBuffer.length == 0) {
             if (username.isBlank()) {
                 Commands.simpleHighlightComponent(txtUsernameLog);
-            }
-            if (passwordBuffer.length == 0) {
+            } else if (passwordBuffer.length == 0) {
                 Commands.simpleHighlightComponent(txtPasswordLog);
             }
             txtErrorLogin.setText("Empty Field/s");
@@ -242,19 +239,13 @@ public class LogForm extends javax.swing.JFrame {
                     pst.setString(1, username);
                     rs = pst.executeQuery();
                     rs.next();
-                    if (BCrypt.checkpw(new String(passwordBuffer), rs.getString("password"))) {
-                        JOptionPane.showMessageDialog(null, "Login Successful");
-                    } else {
-                        Commands.simpleHighlightComponent(txtUsernameLog);
-                        Commands.simpleHighlightComponent(txtPasswordLog);
-                        txtErrorLogin.setText("Invalid Username or Password!");
-                    }
                 } catch (SQLException err) {
                     err.printStackTrace();
-                } catch (IllegalArgumentException err) {
-                    // invalid salt
                 }
 
+                if (BCrypt.checkpw(rs.getString("password"), new String(passwordBuffer)){
+
+                }
             } else {
                 Commands.simpleHighlightComponent(txtUsernameLog);
                 Commands.simpleHighlightComponent(txtPasswordLog);
